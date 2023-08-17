@@ -1,8 +1,71 @@
-from model import model
+from train import int_tower
+import torch
+from collections import defaultdict
 
-products = dict()
-users = dict()
-tags = dict()
+products = defaultdict(lambda : {
+    'count':0,
+    'price':0,
+    'mean_rating':0,
+    'tag':0
+})
+
+users = defaultdict(lambda : {
+    'tags': defaultdict(0),
+    'mean_rating':0
+})
+
+tags = defaultdict(lambda : {
+    'products':[],
+    'count':0
+})
+
+model,data = int_tower()
+model.load_state_dict(torch.load('amazon_fetower.ckpt'))
+print(data.columns)
+
+
+def predict_likelihood(userID,productID,tag):
+    price = products[productID]['price']
+    user_mean_rating = users[userID]['mean_rating']
+    item_mean_rating = products[productID]['mean_rating']
+    model_input = {
+        'reviewerID':userID,
+        'asin':productID,
+        'categories':tag,
+        'user_mean_rating':user_mean_rating,
+        'item_mean_rating':item_mean_rating,
+        'price':price
+    }
+    model.predict(x=model_input,batch_size=1)
+
+# Things to add:
+#  - remove normalization before filling dictionaries
+#  - write fill users function
+
+def fill_products():
+    for i in range(len(data)):
+        pid = data.loc[i,'asin']
+        prc = data.loc[i,'price']
+        mean_rating = data.loc[i,'item_mean_rating']
+        tag=data.loc[i,'categories']
+        products[pid]['count']+=1
+        products[pid]['price']=prc
+        products[pid]['mean_rating']=mean_rating
+        products[pid]['tag']=tag
+
+def fill_tags():
+    for pid,product in products.items():
+        cnt = product['count']
+        tag = product['tag']
+        tags[tag]['products'].append(pid)
+        tags[tag]['count']+=cnt
+
+def fill_users():
+    pass
+
+fill_products()
+print(products[13179])
+
 
 # tags = {
 #   tag: {
@@ -15,18 +78,19 @@ tags = dict()
 #   id: {
 #       tags: {
 #           tag: cnt
-#       }
+#       },
+#       mean_rating
 #   }
 # }
 
 # products {
 #   id: {
-#       count: cnt
+#       count: cnt,
+#       price: price, 
+#       mean_rating 
 #   },
 #   tag: 
 # }
-
-
 
 #                  1. PURCHASE -> RAJ COMPLETE THIS
 
@@ -98,7 +162,7 @@ def global_recommendations(userID, num_recommendations=10, threshold=0.5):
         
         for product in products_in_tag:
 
-            likelihood = nn.predict_likelihood(user, product)  
+            likelihood = predict_likelihood(user, product,tag)  
             
             if likelihood > threshold:
                 recommended_products.append(product)
