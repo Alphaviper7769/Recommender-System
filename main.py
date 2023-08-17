@@ -32,7 +32,8 @@ def purchase(userID, productID):
     tags[products[productID]['tag']] += 1
     # reinforce the model
     
-    #                GLOBAL RECOMMENDATION
+    #                2. GLOBAL RECOMMENDATION
+    
 # you have the function inputs as userID, total_products=10 and threshold=0.5
 # first check if user is valid
 # then iterate in tags
@@ -59,8 +60,32 @@ def global_recommendations(userID, total_products=10, threshold=0.5):
     
     return recommended_products
 
-def user_specific_recommendations(userID):
-    # return local specific recommendations
+
+#                  3.  LOCAL RECOMMENDATION
+
+
+def user_specific_recommendations(userID, total_products=5, max_list=20):
+    user = users.get(userID)
+    if not user:
+        return []  
+    
+    # Sort user's tags by interaction count in descending order
+    sorted_tags = sorted(user['tags'], key=user['tags'].get, reverse=True)
+    
+    recommended_products = []
+    
+    for tag in sorted_tags:
+        products_in_tag = tags[tag]['pid']
+        top_products = products_in_tag[:total_products]
+        tag_recommendations = [tag, top_products]
+        recommended_products.append(tag_recommendations)
+        
+        if len(recommended_products) >= max_list:
+            break
+    
+    return recommended_products
+
+#                 RECOMMEND
 
 def recommend(userID, ratio):
     # return in ratio
