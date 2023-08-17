@@ -59,11 +59,6 @@ def global_recommendations(userID, total_products=10, threshold=0.5):
     
     return recommended_products
 
-
-def global_recommendations(userID):
-    # return global recommendations. Use model
-
-
 def user_specific_recommendations(userID):
     # return local specific recommendations
 
