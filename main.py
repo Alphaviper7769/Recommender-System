@@ -33,7 +33,7 @@ def purchase(userID, productID):
     # reinforce the model
     
     #                2. GLOBAL RECOMMENDATION
-    
+
 # you have the function inputs as userID, total_products=10 and threshold=0.5
 # first check if user is valid
 # then iterate in tags
@@ -85,7 +85,25 @@ def user_specific_recommendations(userID, total_products=5, max_list=20):
     
     return recommended_products
 
-#                 RECOMMEND
+
+#               4.  RECOMMEND
+
+
 
 def recommend(userID, ratio):
-    # return in ratio
+    if not (0 <= ratio <= 1):
+        return [] 
+    
+    global_recs = global_recommendations(userID)
+    user_recs = user_specific_recommendations(userID)
+    
+    total_global = len(global_recs)
+    total_user = len(user_recs)
+    
+    num_global = int(total_global * ratio)
+    num_user = int(total_user * (1 - ratio))
+    
+
+    combined_recommendations = global_recs[:num_global] + user_recs[:num_user]
+    
+    return combined_recommendations
