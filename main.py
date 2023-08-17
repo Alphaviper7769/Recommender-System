@@ -26,11 +26,18 @@ tags = dict()
 #   tag: 
 # }
 
+
+
+#                  1. PURCHASE
+
+
 def purchase(userID, productID):
     users[userID]['tags'][products[productID]['tag']] += 1
     products[productID]['count'] += 1
     tags[products[productID]['tag']] += 1
     # reinforce the model
+
+
     
     #                2. GLOBAL RECOMMENDATION
 
@@ -59,6 +66,38 @@ def global_recommendations(userID, total_products=10, threshold=0.5):
             recommended_products.append(tag_recommendations)
     
     return recommended_products
+
+
+
+#                  2.1     GLOBAL RECOMMENDATION PRODUCT
+
+
+
+def global_recommendations(userID, num_recommendations=10, threshold=0.5):
+    user = users.get(userID)
+    if not user:
+        return []  
+    
+    recommended_products = []
+    
+    for tag in tags:
+        products_in_tag = tags[tag]['pid']
+        
+        for product in products_in_tag:
+
+            likelihood = nn.predict_likelihood(user, product)  
+            
+            if likelihood > threshold:
+                recommended_products.append(product)
+                if len(recommended_products) >= num_recommendations:
+                    break
+        
+        if len(recommended_products) >= num_recommendations:
+            break
+    
+    return recommended_products
+
+
 
 
 #                  3.  LOCAL RECOMMENDATION
