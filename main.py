@@ -28,14 +28,27 @@ tags = dict()
 
 
 
-#                  1. PURCHASE
+#                  1. PURCHASE -> RAJ COMPLETE THIS
 
 
 def purchase(userID, productID):
-    users[userID]['tags'][products[productID]['tag']] += 1
-    products[productID]['count'] += 1
-    tags[products[productID]['tag']] += 1
-    # reinforce the model
+    if userID in users and productID in products:
+        product_tag = products[productID]['tag']
+
+        if product_tag in tags:
+            users[userID]['tags'][product_tag] += 1
+            products[productID]['count'] += 1
+            tags[product_tag] += 1
+
+            # Placeholder for reinforcing the model
+            model.reinforce(userID, productID)
+
+            return True  # Purchase successful
+        else:
+            return False  # Invalid product tag
+    else:
+        return False  # Invalid user or product
+
 
 
     
