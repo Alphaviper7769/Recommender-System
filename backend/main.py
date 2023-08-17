@@ -1,4 +1,4 @@
-from train import int_tower
+from train import int_tower, get_es_mdckpt
 import torch
 from collections import defaultdict
 
@@ -66,6 +66,19 @@ def fill_users():
 fill_products()
 print(products[13179])
 
+# reinforce in sets of 100 rows. So store till its < 100
+model_data = []
+# their corresponsing reviews
+model_values = []
+
+def reinforce(model, data, output):
+    model_data.append(data)
+    model_values(output)
+    if len(model_data) >= 100:
+        es, mdckpt = get_es_mdckpt()
+        model.fit(model_data, model_values, epochs=2, verbose=2, validation_split=0.2, callbacks=[es, mdckpt])
+    return model
+
 
 # tags = {
 #   tag: {
@@ -105,7 +118,7 @@ def purchase(userID, productID):
             tags[product_tag] += 1
 
             # Placeholder for reinforcing the model
-            model.reinforce(userID, productID)
+            model = reinforce(model, "data", "output")
 
             return True  # Purchase successful
         else:
@@ -223,3 +236,6 @@ def recommend(userID, ratio):
     combined_recommendations = global_recs[:num_global] + user_recs[:num_user]
     
     return combined_recommendations
+
+def check_credential(userID, password):
+    pass

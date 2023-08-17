@@ -257,10 +257,6 @@ def int_tower():
         print('cuda ready...')
         device = 'cuda:0'
 
-    es = EarlyStopping(monitor='val_auc', min_delta=0, verbose=1,
-                       patience=3, mode='max', baseline=None)
-    mdckpt = ModelCheckpoint(filepath='amazon_fetower.ckpt', monitor='val_auc',
-                             mode='max', verbose=1, save_best_only=True,save_weights_only=True)
     model = IntTower(user_feature_columns, item_feature_columns, field_dim= 64, task='binary', dnn_dropout=dropout,
                      device=device, user_head=2,item_head=2, user_filed_size=1, item_filed_size=2)
 
@@ -277,3 +273,10 @@ def int_tower():
 
 
     return model,data
+
+def get_es_mdckpt():
+    es = EarlyStopping(monitor='val_auc', min_delta=0, verbose=1,
+                       patience=3, mode='max', baseline=None)
+    mdckpt = ModelCheckpoint(filepath='amazon_fetower.ckpt', monitor='val_auc',
+                             mode='max', verbose=1, save_best_only=True,save_weights_only=True)
+    return es, mdckpt

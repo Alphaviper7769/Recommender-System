@@ -1,7 +1,5 @@
-import logo from './logo.svg';
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-
-var products = []
 
 /*
 products ; {
@@ -14,20 +12,17 @@ products ; {
 */
 
 const Prods = (props) => {
-  const [purchase, setPurchase] = useState(true);
-  const purchaseHandler = () => {
-    setPurchase(false);
-  }
+  const purchaseHandler = async (product) => {
+    await axios.post(process.env.REACT_APP_BACKEND + '/purchase', product);
+  };
+
   return (
     <div className='prods'>
       <img src={props.img} className='prods-img' alt='img' />
       <h2>{props.name}</h2>
       <p>{props.price}</p>
       <div className='buttons'>
-          {purchase ?
-            <button onClick={purchaseHandler}>Purchase</button>
-            : <p>Purchased</p>
-          }
+        <button onClick={purchaseHandler.call(props)}>Purchase</button>
       </div>
     </div>
   );
@@ -35,15 +30,24 @@ const Prods = (props) => {
 
 
 function Home() {
+    const [products, setProducts] = useState([]);
     useEffect(() => {
-        // http request
+        const get_products = async () => {
+          let response;
+          response = await axios.get(process.env.REACT_APP_BACKEND + '/home');
+          setProducts(response);
+        };
+
+        get_products();
     }, []);
     return (
-        <div className="home">
+      <>
+        {products.length > 0 && <div className="home">
         {products.map((product) => {
             <Prods props={product} />
         })}
-        </div>
+        </div>}
+      </>
     );
 }
 

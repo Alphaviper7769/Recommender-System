@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import 'axios';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -9,8 +10,9 @@ const Login = () => {
     });
     const { userID, password } = data;
 
-    const onSubmitHandler = (e) => {
+    const onSubmitHandler = async (e) => {
         e.preventDefault();
+        await axios.post(process.env.REACT_APP_BACKEND, data);
         navigate('/home');
     };
 
