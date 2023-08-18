@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import 'axios';
+import axios from 'axios';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -22,6 +22,7 @@ const Login = () => {
 
     return (
         <div className='login'>
+            <h3>LOGIN</h3>
             <form onSubmit={onSubmitHandler}>
                 <div className='field'>
                     <label>UserID</label>

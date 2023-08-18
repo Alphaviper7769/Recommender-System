@@ -238,4 +238,4 @@ def recommend(userID, ratio):
     return combined_recommendations
 
 def check_credential(userID, password):
-    pass
+    return True
