@@ -1,6 +1,6 @@
 from train import int_tower, get_es_mdckpt
 import torch
-from collections import defaultdict
+from collections import defaultdict,OrderedDict
 
 products = defaultdict(lambda : {
     'count':0,
@@ -21,7 +21,9 @@ tags = defaultdict(lambda : {
 
 model,data = int_tower()
 model.load_state_dict(torch.load('amazon_fetower.ckpt'))
-print(data.columns)
+# print(data.columns)
+
+data = data[:100]
 
 
 def predict_likelihood(userID,productID,tag):
@@ -61,10 +63,29 @@ def fill_tags():
         tags[tag]['count']+=cnt
 
 def fill_users():
-    pass
+    for i in range(len(data)):
+        uid = data.loc[i,'reviewerID']
+        pid = data.loc[i,'asin']
+        tag = data.loc[i,'categories']
+        mean_rating = data.loc[i,'user_mean_rating']
+        users[uid]['tags'][tag] += products[pid]['count']
+        users[uid]['mean_rating'] = mean_rating
 
 fill_products()
-print(products[13179])
+fill_tags()
+fill_users()
+
+for prods,cnt in tags.values():
+    prods.sort(key=lambda x : products[x]['count'],reverse=True)
+
+tags = OrderedDict(sorted(tags.items(),key=lambda tag,cnt : cnt,reverse=True))
+
+for tags,mr in users.values():
+    tags = OrderedDict(sorted(tags.items(), key = lambda tag,cnt : cnt,reverse=True))
+
+print(products)
+
+# print(products[13179])
 
 # reinforce in sets of 100 rows. So store till its < 100
 model_data = []
