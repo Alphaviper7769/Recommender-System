@@ -19,7 +19,9 @@ tags = defaultdict(lambda : {
     'count':0
 })
 
-model,data = int_tower()
+# 1) denormalize
+# 2) function to get data in structure required
+model, data, mms = int_tower()
 model.load_state_dict(torch.load('amazon_fetower.ckpt'))
 # print(data.columns)
 

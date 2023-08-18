@@ -272,7 +272,7 @@ def int_tower():
         num_params += curr_num_params
 
 
-    return model,data
+    return model, data, mms
 
 def get_es_mdckpt():
     es = EarlyStopping(monitor='val_auc', min_delta=0, verbose=1,
