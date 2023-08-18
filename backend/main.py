@@ -260,5 +260,46 @@ def recommend(userID, ratio):
     
     return combined_recommendations
 
+
+#                   5. Personalised descount
+
+def calculate_discount(user_id, product_price):
+
+    # Assuming model.get_preferred_price_range() returns the user's preferred price range (upper bound)
+    user_preferred_price_range = model.get_preferred_price_range(user_id)
+
+    
+    if product_price > user_preferred_price_range:
+        
+        threshold_slabs = {
+            (0, 500): 0.20,
+            (500, 2000): 0.15,
+            (2000, 10000): 0.10,
+            (10000, float('inf')): 0.05
+        }
+
+        # Find the applicable threshold based on the product price
+        applicable_threshold = None
+        for price_range, threshold in threshold_slabs.items():
+            lower_bound, upper_bound = price_range
+            if lower_bound <= product_price <= upper_bound:
+                applicable_threshold = threshold
+                break
+
+        if applicable_threshold is not None:
+            
+            discount = product_price * applicable_threshold
+            discounted_price = product_price - discount
+
+            if discounted_price < user_preferred_price_range:
+                percentage_discount = applicable_threshold * 100
+                return user_preferred_price_range, percentage_discount
+            else:
+                return product_price, 0  
+    else:
+        return product_price, 0 
+    
+
+
 def check_credential(userID, password):
     return True
