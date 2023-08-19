@@ -2,6 +2,16 @@
 
 Recommendation System Application based on **IntTower** (https://github.com/archersama/IntTower).
 
+Important functions of the application includes,
+
+-> `user_specific_recommendation`
+-> `global_recommendation`
+-> `purchase`
+-> `reinforce`
+-> `predict_likelihood`
+-> `calculate_discount`
+-> `remove_tag`
+
 To use the application, amke sure you have **git** installed and clone the repository using,
 
 `git clone https://github.com/Alphaviper7769/Recommender-System.git`
