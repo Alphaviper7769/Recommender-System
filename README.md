@@ -5,11 +5,17 @@ Recommendation System Application based on **IntTower** (https://github.com/arch
 Important functions of the application includes,
 
 -> `user_specific_recommendation`
+
 -> `global_recommendation`
+
 -> `purchase`
+
 -> `reinforce`
+
 -> `predict_likelihood`
+
 -> `calculate_discount`
+
 -> `remove_tag`
 
 To use the application, amke sure you have **git** installed and clone the repository using,
