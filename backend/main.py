@@ -14,6 +14,11 @@ users = defaultdict(lambda : {
     'mean_rating':0
 })
 
+# user:{
+#     tags[tag:numOfItem],
+#     mean_rating:number
+# }
+
 tags = defaultdict(lambda : {
     'products':[],
     'count':0
@@ -140,7 +145,6 @@ def purchase(userID, productID):
             products[productID]['count'] += 1
             tags[product_tag] += 1
 
-            # Placeholder for reinforcing the model
             model = reinforce(model, "data", "output")
 
             return True  # Purchase successful
@@ -154,14 +158,6 @@ def purchase(userID, productID):
     
     #                2. GLOBAL RECOMMENDATION
 
-# you have the function inputs as userID, total_products=10 and threshold=0.5
-# first check if user is valid
-# then iterate in tags
-# pass tag and userId to the model
-# the model returns a number between 0 and 1 indicating the likelihood of the user buying the product
-# if that value is greater than the threshold get the tag and the top < total_products> number of products in an subarray
-# append that subarray to the main array
-# return the main array
 
 def global_recommendations(userID, total_products=10, threshold=0.5):
     user = users.get(userID)
@@ -299,6 +295,21 @@ def calculate_discount(user_id, product_price):
     else:
         return product_price, 0 
     
+
+#         6.    Interactive Recommendation
+
+def removeTag(userId, tag, weight):
+    try:
+        if userId in users and tag in users[userId]['tags']:
+            current_value = users[userId]['tags'][tag]
+            new_value = max(0, current_value - weight)
+            users[userId]['tags'][tag] = new_value
+        else:
+            print("User ID or tag not found.")
+    except Exception as e:
+        print("An error occurred:", e)
+
+
 
 
 def check_credential(userID, password):
