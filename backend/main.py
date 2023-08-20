@@ -1,5 +1,6 @@
 from train import int_tower, get_es_mdckpt
 import torch
+import time
 from collections import defaultdict,OrderedDict
 
 products = defaultdict(lambda : {
@@ -11,7 +12,8 @@ products = defaultdict(lambda : {
 
 users = defaultdict(lambda : {
     'tags': defaultdict(0),
-    'mean_rating':0
+    'mean_rating':0,
+    'lastRecommendTime': time.time()
 })
 
 # user:{
@@ -145,6 +147,7 @@ def purchase(userID, productID):
             products[productID]['count'] += 1
             tags[product_tag] += 1
 
+            update_tags(userID, weight=0.2)
             model = reinforce(model, "data", "output")
 
             return True  # Purchase successful
@@ -310,6 +313,20 @@ def removeTag(userId, tag, weight):
         print("An error occurred:", e)
 
 
+#            7. Decaying Algorithm
+
+def update_tags(userId, weight):
+    if userId in users:
+        current_time = time.time()
+        last_recommend_time = users[userId]['lastRecommendTime']
+        time_difference = current_time - last_recommend_time
+        
+        for tag in users[userId]['tags']:
+            users[userId]['tags'][tag] = max(0, users[userId]['tags'][tag] - weight * time_difference)
+        
+        users[userId]['lastRecommendTime'] = current_time
+    else:
+        print("User ID not found.")
 
 
 def check_credential(userID, password):
