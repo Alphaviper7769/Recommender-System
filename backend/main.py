@@ -16,21 +16,14 @@ users = defaultdict(lambda : {
     'lastRecommendTime': time.time()
 })
 
-# user:{
-#     tags[tag:numOfItem],
-#     mean_rating:number
-# }
-
 tags = defaultdict(lambda : {
     'products':[],
     'count':0
 })
 
-# 1) denormalize
-# 2) function to get data in structure required
+
 model, data, mms = int_tower()
 model.load_state_dict(torch.load('amazon_fetower.ckpt'))
-# print(data.columns)
 
 data = data[:100]
 
@@ -48,10 +41,6 @@ def predict_likelihood(userID,productID,tag):
         'price':price
     }
     model.predict(x=model_input,batch_size=1)
-
-# Things to add:
-#  - remove normalization before filling dictionaries
-#  - write fill users function
 
 def fill_products():
     for i in range(len(data)):
@@ -94,8 +83,6 @@ for tags,mr in users.values():
 
 print(products)
 
-# print(products[13179])
-
 # reinforce in sets of 100 rows. So store till its < 100
 model_data = []
 # their corresponsing reviews
@@ -110,32 +97,8 @@ def reinforce(model, data, output):
     return model
 
 
-# tags = {
-#   tag: {
-#       pid: [],
-#        cnt: 0
-#   }
-# } 
 
-# users: {
-#   id: {
-#       tags: {
-#           tag: cnt
-#       },
-#       mean_rating
-#   }
-# }
-
-# products {
-#   id: {
-#       count: cnt,
-#       price: price, 
-#       mean_rating 
-#   },
-#   tag: 
-# }
-
-#                  1. PURCHASE -> RAJ COMPLETE THIS
+#                  1. PURCHASE
 
 
 def purchase(userID, productID):
@@ -150,19 +113,19 @@ def purchase(userID, productID):
             update_tags(userID, weight=0.2)
             model = reinforce(model, "data", "output")
 
-            return True  # Purchase successful
+            return True  
         else:
-            return False  # Invalid product tag
+            return False 
     else:
-        return False  # Invalid user or product
+        return False  
 
 
 
     
-    #                2. GLOBAL RECOMMENDATION
+    #                2. GLOBAL RECOMMENDATION____ DEFUNCT
 
 
-def global_recommendations(userID, total_products=10, threshold=0.5):
+def global_recommendations_tag(userID, total_products=10, threshold=0.5):
     user = users.get(userID)
     if not user:
         return []  # User not found
@@ -220,7 +183,6 @@ def user_specific_recommendations(userID, total_products=5, max_list=20):
     if not user:
         return []  
     
-    # Sort user's tags by interaction count in descending order
     sorted_tags = sorted(user['tags'], key=user['tags'].get, reverse=True)
     
     recommended_products = []
@@ -264,7 +226,6 @@ def recommend(userID, ratio):
 
 def calculate_discount(user_id, product_price):
 
-    # Assuming model.get_preferred_price_range() returns the user's preferred price range (upper bound)
     user_preferred_price_range = model.get_preferred_price_range(user_id)
 
     

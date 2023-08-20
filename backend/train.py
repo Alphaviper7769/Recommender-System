@@ -24,10 +24,6 @@ def data_process(data_path):
     data['overall'] = data['overall'].apply(lambda x: 1 if x >= 4 else 0)
     data['price'] = data['price'].fillna(data['price'].mean())
     data = data.sort_values(by='unixReviewTime', ascending=True)
-    # train = data.iloc[:int(len(data)*0.8)].copy()
-    # test = data.iloc[int(len(data)*0.8):].copy()
-    # train, test = train_test_split(data, test_size=0.2)
-    # return train, test, data
     return data
 
 
@@ -134,10 +130,6 @@ if __name__ == "__main__":
     mms.fit(data[dense_features])
     data[dense_features] = mms.transform(data[dense_features])
 
-    # CHANGE ALL ASIN TO 0 TO MAKE MODEL IGNORE IT
-    # data['asin']=[0 for x in data['asin']]
-    # print(data['asin'][0])
-
     train,test = train_test_split(data,test_size=0.2)
 
     # 2.preprocess the sequence feature
@@ -200,12 +192,6 @@ def int_tower():
     seed = 1023
     lr = 0.001
 
-
-    print("1")
-
-
-
-
     setup_seed(seed)
     data_path = './data/amazon_eletronics.csv'
 
@@ -231,10 +217,6 @@ def int_tower():
     mms = MinMaxScaler(feature_range=(0, 1))
     mms.fit(data[dense_features])
     data[dense_features] = mms.transform(data[dense_features])
-
-    # CHANGE ALL ASIN TO 0 TO MAKE MODEL IGNORE IT
-    # data['asin']=[0 for x in data['asin']]
-    # print(data['asin'][0])
 
     # train,test = train_test_split(data,test_size=0.2)
 
