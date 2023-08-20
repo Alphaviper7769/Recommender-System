@@ -13,9 +13,16 @@ products ; {
 
 const Prods = (props) => {
   const purchaseHandler = async () => {
-    // await axios.post(process.env.REACT_APP_BACKEND + '/purchase', props);
+    await axios.post(process.env.REACT_APP_BACKEND + '/purchase', props);
   };
 
+  const closeHandler = async () => {
+    await axios.post(process.env.REACT_APP_BACKEND + '/product', {
+      'productid': props.id,
+      'value': -0.2
+    });
+    navigate('/home');
+  }
   const { img, name, price, tag } = props.props;
 
   return (
@@ -28,6 +35,7 @@ const Prods = (props) => {
       </div>
       <div className='buttons'>
         <button onClick={purchaseHandler}>Purchase</button>
+        <button onCLick={closeHandler}>Close</button>
       </div>
     </div>
   );
@@ -36,35 +44,16 @@ const Prods = (props) => {
 
 function Home() {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([
-    {
-      img: '',
-      name: 'laptop',
-      price: 'Rs 20000',
-      tag: 'Electronics'
-    },
-    {
-      img: '',
-      name: 'laptop',
-      price: 'Rs 20000',
-      tag: 'Electronics'
-    },
-    {
-      img: '',
-      name: 'laptop',
-      price: 'Rs 20000',
-      tag: 'Electronics'
-    }
-  ]);
-    // useEffect(() => {
-    //     const get_products = async () => {
-    //       let response;
-    //       response = await axios.get(process.env.REACT_APP_BACKEND + '/home');
-    //       setProducts(response);
-    //     };
+  const [products, setProducts] = useState([]);
+    useEffect(() => {
+        const get_products = async () => {
+          let response;
+          response = await axios.get(process.env.REACT_APP_BACKEND + '/home');
+          setProducts(response);
+        };
 
-    //     get_products();
-    // }, []);
+        get_products();
+    }, []);
     const [search, setSearch] = useState('');
     const submitChange = (e) => {
       setSearch(...search, e.target.value);
@@ -72,9 +61,9 @@ function Home() {
     const searchSubmit = async (e) => {
       e.preventDefault();
       // submit tags
-      // axios.post(process.env.REACT_APP_BACKEND + '/search', {
-      //   'tag': search
-      // });
+      axios.post(process.env.REACT_APP_BACKEND + '/search', {
+        'tag': search
+      });
       navigate('/home');
     };
     return (
